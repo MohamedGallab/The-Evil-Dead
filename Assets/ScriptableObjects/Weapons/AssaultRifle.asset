@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c37783a1efb5cc42a2938db644dd69b, type: 3}
+  m_Name: AssaultRifle
+  m_EditorClassIdentifier: 
+  _itemImage: {fileID: 21300000, guid: e4fa8ad331a4aae4f9917f73521d0add, type: 3}
+  _itemName: Assault Riff;e
+  _itemDescription: pew pew assault riffle
+  _isSellable: 0
+  _isBuyable: 1
+  _buyPrice: 150
+  _sellPrice: 0
+  _isTwoHanded: 1
+  _firingMode: 1
+  _damage: 1
+  _timeBetweenShots: 0.2
+  _range: Medium
+  _capacity: 30
