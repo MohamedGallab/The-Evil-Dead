@@ -20,4 +20,4 @@ MonoBehaviour:
   _buyPrice: 30
   _sellPrice: 0
   _weapon: Pistol
-  _amount: 12
+  _amountPerPack: 12

@@ -25,12 +25,8 @@ public class Weapon : Item
     [SerializeField]
     private int _capacity;
 
+    [SerializeField]
     private int _ammoLeft; //decrement with each shot
-
-     void Start()
-    {
-        _ammoLeft = _capacity;
-    }
 
     //setters and getters
     public bool IsTwoHanded

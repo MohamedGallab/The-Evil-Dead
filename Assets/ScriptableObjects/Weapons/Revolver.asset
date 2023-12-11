@@ -25,3 +25,4 @@ MonoBehaviour:
   _timeBetweenShots: 1
   _range: Long
   _capacity: 6
+  _ammoLeft: 6
