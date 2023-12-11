@@ -20,4 +20,4 @@ MonoBehaviour:
   _buyPrice: 50
   _sellPrice: 0
   _weapon: Assault Riffle
-  _amount: 30
+  _amountPerPack: 30

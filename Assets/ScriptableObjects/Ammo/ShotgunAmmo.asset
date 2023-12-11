@@ -20,4 +20,4 @@ MonoBehaviour:
   _buyPrice: 40
   _sellPrice: 0
   _weapon: Shotgun
-  _amount: 8
+  _amountPerPack: 8

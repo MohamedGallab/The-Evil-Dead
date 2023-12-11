@@ -9,7 +9,7 @@ public class Ammo : Item
     private string _weapon;
 
     [SerializeField]
-    private int _amount;
+    private int _amountPerPack;
 
     public string Weapon
     {
@@ -17,10 +17,10 @@ public class Ammo : Item
         set { _weapon = value; }
     }
 
-    public int Amount
+    public int AmountPerPack
     {
-        get { return _amount; }
-        set { _amount = value; }
+        get { return _amountPerPack; }
+        set { _amountPerPack = value; }
     }
 
 }
