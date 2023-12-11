@@ -15,13 +15,14 @@ public class InventorySlot : MonoBehaviour
         GameObject slotIcon = transform.Find("Icon").gameObject;
         SlotImage = slotIcon.GetComponent<Image>();
     }
+
     public void InitializeItem(Item newItem)
     {
         CurrentItem = newItem;
 
         if (newItem.ItemImage != null)
         {
-            SlotImage.sprite = CurrentItem.ItemImage;
+            SlotImage.sprite = newItem.ItemImage;
             SlotImage.enabled = true;
         }
     }

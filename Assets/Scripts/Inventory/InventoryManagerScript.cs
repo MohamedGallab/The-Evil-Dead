@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class InventoryManagerScript : MonoBehaviour
 {
-    static Item[] Items = new Item[7];
-
+    //static Item[] _items = new Item[7];
+    public static Item[] Items { get; private set; } = new Item[7];
     [SerializeField]
     GameObject[] Slots;
 
@@ -15,7 +15,7 @@ public class InventoryManagerScript : MonoBehaviour
 
     public void PickUpItem(Item newItem)
     {
-        
+
         // Assign the picked up item type to the next open index
         Items[CurrentSlotIndex] = newItem;
 

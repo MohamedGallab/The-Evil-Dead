@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96bc583939b3f1e498e846925383db7b, type: 3}
+  m_Name: GreenHerb
+  m_EditorClassIdentifier: 
+  _itemImage: {fileID: 21300000, guid: c5e9e75e66e5c6d4a899111403822b12, type: 3}
+  _itemName: Green Herb
+  _itemDescription: Can be used for health or to craft mixtures.
+  _isSellable: 1
+  _isBuyable: 1
+  _buyPrice: 20
+  _sellPrice: 15
+  _color: Green
+  _healthPoints: 2

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 449053b606d34f84fbafe19bfa493579, type: 3}
+  m_Name: HandGrenade
+  m_EditorClassIdentifier: 
+  _itemImage: {fileID: 21300000, guid: e865da6c789026346a352743b4e44937, type: 3}
+  _itemName: Hand Grenade
+  _itemDescription: Damages all entities in its radius by 4 health points.
+  _isSellable: 1
+  _isBuyable: 1
+  _buyPrice: 15
+  _sellPrice: 10
+  _type: Hand
