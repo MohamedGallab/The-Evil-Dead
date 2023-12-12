@@ -8,7 +8,7 @@ using TMPro;
 
 public class InventorySlot : MonoBehaviour
 {
-    Item CurrentItem;
+    public Item CurrentItem;
 
     int IndexInInventory;
 
@@ -17,7 +17,7 @@ public class InventorySlot : MonoBehaviour
     Text SlotText;
 
     // If the slot contains ammo, this field stores the total amount of ammo from different instances
-    int StackCount = 0;
+    public int StackCount { get; set; } = 0;
 
     TMP_Dropdown Dropdown;
 
@@ -39,7 +39,8 @@ public class InventorySlot : MonoBehaviour
 
         // Get the dropdown component
         Dropdown = GetComponentInChildren<TMP_Dropdown>();
-        Dropdown.onValueChanged.AddListener(delegate {
+        Dropdown.onValueChanged.AddListener(delegate
+        {
             DropdownValueChanged();
         });
 
@@ -47,8 +48,6 @@ public class InventorySlot : MonoBehaviour
         GameObject InventoryManager = GameObject.Find("InventoryManager");
         InventoryScript = InventoryManager.GetComponent<InventoryManagerScript>();
 
-
-        Debug.Log("In starttt");
 
     }
 
@@ -82,7 +81,7 @@ public class InventorySlot : MonoBehaviour
                 //Initialize the new options in dropdown
                 List<TMP_Dropdown.OptionData> possibleActions = GetPossibleActions();
                 Dropdown.AddOptions(possibleActions);
-               
+
                 Dropdown.RefreshShownValue();
 
                 _timer = 0f;
@@ -110,7 +109,7 @@ public class InventorySlot : MonoBehaviour
         else if (CurrentItem is Ammo)
         {
             StackCount = (CurrentItem as Ammo).AmountPerPack;
-            SlotText.text = StackCount+"";
+            SlotText.text = StackCount + "";
             SlotText.enabled = true;
         }
         else
@@ -134,7 +133,7 @@ public class InventorySlot : MonoBehaviour
         {
             possibleActions.Add(new TMP_Dropdown.OptionData("Equip"));
         }
-        if(CurrentItem is Herb || CurrentItem is Mixture)
+        if (CurrentItem is Herb || CurrentItem is Mixture)
         {
             possibleActions.Add(new TMP_Dropdown.OptionData("Use"));
         }
@@ -155,19 +154,19 @@ public class InventorySlot : MonoBehaviour
     {
         string selectedOption = Dropdown.options[Dropdown.value].text;
 
-        if(selectedOption.Equals("Equip"))
+        if (selectedOption.Equals("Equip"))
         {
             Equip();
         }
-        else if(selectedOption.Equals("Use"))
+        else if (selectedOption.Equals("Use"))
         {
             Use();
         }
-        else if(selectedOption.Equals("Combine"))
+        else if (selectedOption.Equals("Combine"))
         {
 
         }
-        else if(selectedOption.Equals("Discard"))
+        else if (selectedOption.Equals("Discard"))
         {
             DiscardItem();
         }
@@ -221,7 +220,7 @@ public class InventorySlot : MonoBehaviour
 
     public int ReloadAmmo(int ammoNeeded) //handle ammo when reloading a weapon with ammo
     {
-        if(StackCount > ammoNeeded)
+        if (StackCount > ammoNeeded)
         {
             StackCount -= ammoNeeded;
             return ammoNeeded;

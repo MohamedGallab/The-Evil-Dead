@@ -20,4 +20,4 @@ MonoBehaviour:
   _buyPrice: 70
   _sellPrice: 0
   _weapon: Revolver
-  _amount: 6
+  _amountPerPack: 6

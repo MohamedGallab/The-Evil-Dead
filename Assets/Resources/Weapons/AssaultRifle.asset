@@ -25,3 +25,4 @@ MonoBehaviour:
   _timeBetweenShots: 0.2
   _range: Medium
   _capacity: 30
+  _ammoLeft: 30

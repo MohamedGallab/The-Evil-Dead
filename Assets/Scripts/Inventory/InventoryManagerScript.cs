@@ -9,10 +9,14 @@ using UnityEngine.UIElements;
 
 public class InventoryManagerScript : MonoBehaviour
 {
-    Item[] Items = new Item[6];
+    static Item[] _items = new Item[6];
+    public Item[] Items
+    {
+        get { return _items; }
 
+    }
     [SerializeField]
-    GameObject[] Slots;
+    public GameObject[]  Slots { get; private set; }
 
     int CurrentSlotIndex = 0;
 
@@ -46,7 +50,8 @@ public class InventoryManagerScript : MonoBehaviour
 
     Text GoldText;
 
-    void Start()
+
+    void Awake()
     {
         PickUpItem(DefaultItem1);
         PickUpItem(DefaultItem2);
@@ -61,6 +66,11 @@ public class InventoryManagerScript : MonoBehaviour
         GameObject goldStack = GoldSlot.transform.Find("Stack").gameObject;
         GoldText = goldStack.GetComponent<Text>();
         GoldText.enabled = true;
+        StorageManager storageManager = FindObjectOfType<StorageManager>();
+        if (storageManager != null)
+        {
+            storageManager.gameObject.SetActive(true);
+        }
     }
 
     void Update()
@@ -70,8 +80,6 @@ public class InventoryManagerScript : MonoBehaviour
 
     public void PickUpItem(Item newItem)
     {
-        Debug.Log(CurrentSlotIndex);
-        Debug.Log(newItem.ItemName);
         if (newItem is Ammo && SameAmmoSlot(newItem as Ammo) !=-1)
         {
             //Stack the new ammo to the current ammo
