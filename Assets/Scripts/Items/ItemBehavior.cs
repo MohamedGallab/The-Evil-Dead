@@ -18,7 +18,7 @@ public class PistolTest : MonoBehaviour, IInteractable
     }
     public void OnInteract()
     {
-        if(InventoryScript.CanPickupItem())
+        if(InventoryScript.CanPickupItem(Item))
         {
             InventoryScript.PickUpItem(Item);
             gameObject.SetActive(false);

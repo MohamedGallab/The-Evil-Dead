@@ -6846,6 +6846,14 @@ MonoBehaviour:
   DefaultItem3: {fileID: 11400000, guid: 6468ba3eeef210743a7679af6492e90b, type: 2}
   HealthSlot: {fileID: 8451699317272968275}
   GoldSlot: {fileID: 7169673840502889560}
+  RedRedMixture: {fileID: 11400000, guid: 439114afda0cf9849943b25990c57ff7, type: 2}
+  GreenGreenMixture: {fileID: 11400000, guid: c96b8e0ea5e7e9244b228b71a4fc1e2c, type: 2}
+  GreenRedMixture: {fileID: 11400000, guid: 34097578e1a0da7478acb28759fc27d4, type: 2}
+  NormalNormalAmmo: {fileID: 11400000, guid: 890500d48766d8744aa5e0255dbf5c9f, type: 2}
+  HighGradeHighGradeAmmo: {fileID: 11400000, guid: d0a89e1a0406c9041aeb3820482b6573,
+    type: 2}
+  NormalHighGradeAmmo: {fileID: 11400000, guid: da40a6ab9f2b0344088212bbe7db5c0f,
+    type: 2}
 --- !u!1 &1454806391
 GameObject:
   m_ObjectHideFlags: 0
@@ -13364,19 +13372,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6997696396712481672}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3239569656684125481}
-        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
-        m_MethodName: OpenDropdown
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

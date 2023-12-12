@@ -22,7 +22,9 @@ public class InventoryManagerScript : MonoBehaviour
     [SerializeField]
     GameObject EquippedGrenade;
 
-    int equippedGrenadeIndex = -1;
+    int EquippedGrenadeIndex = -1;
+
+    int FirstCombineItemIndex = -1;
 
     // To place the default items in the inventory at the beginning
     [SerializeField]
@@ -45,6 +47,21 @@ public class InventoryManagerScript : MonoBehaviour
     GameObject GoldSlot;
 
     Text GoldText;
+
+    //Results of crafting
+    [SerializeField]
+    Mixture RedRedMixture;
+    [SerializeField]
+    Mixture GreenGreenMixture;
+    [SerializeField]
+    Mixture GreenRedMixture;
+
+    [SerializeField]
+    Ammo NormalNormalAmmo;
+    [SerializeField]
+    Ammo HighGradeHighGradeAmmo;
+    [SerializeField]
+    Ammo NormalHighGradeAmmo;
 
     void Start()
     {
@@ -70,8 +87,6 @@ public class InventoryManagerScript : MonoBehaviour
 
     public void PickUpItem(Item newItem)
     {
-        Debug.Log(CurrentSlotIndex);
-        Debug.Log(newItem.ItemName);
         if (newItem is Ammo && SameAmmoSlot(newItem as Ammo) !=-1)
         {
             //Stack the new ammo to the current ammo
@@ -91,7 +106,7 @@ public class InventoryManagerScript : MonoBehaviour
             slotScript.InitializeItem(newItem, CurrentSlotIndex);
 
             // Increment index
-            for (int i = CurrentSlotIndex + 1; i < Items.Length; i++)
+            for (int i = CurrentSlotIndex ; i < Items.Length; i++)
             {
                 if (Items[i] == null)
                 {
@@ -104,15 +119,19 @@ public class InventoryManagerScript : MonoBehaviour
                 }
             }
         }
+        
     }
 
-    public bool CanPickupItem()
+    public bool CanPickupItem(Item newItem)
     {
-        if (CurrentSlotIndex >= 6)
+        if (CurrentSlotIndex > 5)
         {
-            Debug.Log("Can't pickup");
+            // Check if the item being picked up is ammo that can be stacked
+            if(newItem is Ammo && SameAmmoSlot(newItem as Ammo) != -1)
+            {
+                return true;
+            }
             return false;
-            
         }
 
         return true;
@@ -235,7 +254,7 @@ public class InventoryManagerScript : MonoBehaviour
         {
             InventoryEquippedGrenadeSlot equippedScript = EquippedGrenade.GetComponent<InventoryEquippedGrenadeSlot>();
             equippedScript.EquipGrenade(equippedItem as Grenade);
-            equippedGrenadeIndex = slotIndex;
+            EquippedGrenadeIndex = slotIndex;
         }
     }
 
@@ -259,6 +278,78 @@ public class InventoryManagerScript : MonoBehaviour
         {
             CurrentSlotIndex = slotIndex;
         }
+    }
+
+    public void SetFirstCombineItem(int slotIndex)
+    {
+        FirstCombineItemIndex = slotIndex;
+    }
+
+    public bool isCombining() //to know if the state of the game is between the 2 clicks of combining 2 items
+    {
+        return FirstCombineItemIndex != -1;
+    }
+
+    public Item GetFirstCombineItem()
+    {
+        if(FirstCombineItemIndex != -1)
+        {
+            return Items[FirstCombineItemIndex];
+        }
+        return null;
+    }
+
+    public void PerformCrafting(int secondCombineItemIndex)
+    {
+        Item firstItem = Items[FirstCombineItemIndex];
+        Item secondItem = Items[secondCombineItemIndex];
+
+        //Discard the 1st item
+        InventorySlot slotScript = Slots[FirstCombineItemIndex].GetComponent<InventorySlot>();
+        slotScript.DiscardItem();
+
+        //Continue discarding the 2nd item
+        Items[secondCombineItemIndex] = null;
+        if (secondCombineItemIndex < CurrentSlotIndex)
+        {
+            CurrentSlotIndex = secondCombineItemIndex;
+        }
+
+        //Combination
+        if((firstItem is Herb) && (secondItem is Herb))
+        {
+            if((firstItem as Herb).Color.Equals("Green") && (secondItem as Herb).Color.Equals("Green"))
+            {
+                PickUpItem(GreenGreenMixture);
+            }
+            else if ((firstItem as Herb).Color.Equals("Red") && (secondItem as Herb).Color.Equals("Red"))
+            {
+                PickUpItem(GreenRedMixture);
+            }
+            else //First is red and second is green or first is green and second is red
+            {
+                PickUpItem(RedRedMixture);
+            }
+        }
+        else if ((firstItem is Gunpowder) && (secondItem is Gunpowder))
+        {
+            if ((firstItem as Gunpowder).Type.Equals("Normal") && (secondItem as Gunpowder).Type.Equals("Normal"))
+            {
+                PickUpItem(NormalNormalAmmo);
+            }
+            else if ((firstItem as Gunpowder).Type.Equals("HighGrade") && (secondItem as Gunpowder).Type.Equals("HighGrade"))
+            {
+                PickUpItem(HighGradeHighGradeAmmo);
+            }
+            else //First is Normal and second is HighGrade or first is HighGrade and second is Normal
+            {
+                PickUpItem(NormalHighGradeAmmo);
+            }
+        }
+
+
+        //reset the state of combination/crafting
+        FirstCombineItemIndex = -1;
     }
 
     public void ReloadEquippedWeapon()
@@ -302,15 +393,22 @@ public class InventoryManagerScript : MonoBehaviour
 
     public void ThrowGrenade()
     {
-        if(equippedGrenadeIndex != -1)
+        if(EquippedGrenadeIndex != -1)
         {
-            InventorySlot slotScript = Slots[equippedGrenadeIndex].GetComponent<InventorySlot>();
+            InventorySlot slotScript = Slots[EquippedGrenadeIndex].GetComponent<InventorySlot>();
             slotScript.DiscardItem();
-            equippedGrenadeIndex = -1;
+            EquippedGrenadeIndex = -1;
         }
         else
         {
             //play a sound -> there is no equipped grenade
         }
     }
+
+    //For the store
+    public Item[] GetItems()
+    {
+        return Items;
+    }
+
 }
