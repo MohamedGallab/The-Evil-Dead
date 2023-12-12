@@ -74,9 +74,7 @@ public class InventoryEquippedWeaponSlot : MonoBehaviour
     {
         if(EquippedWeapon != null && EquippedWeapon.AmmoLeft > 0)
         {
-            Debug.Log(EquippedWeapon.AmmoLeft);
             EquippedWeapon.AmmoLeft = EquippedWeapon.AmmoLeft - 1;
-            Debug.Log(EquippedWeapon.AmmoLeft);
             //play firing sound
         }
         else

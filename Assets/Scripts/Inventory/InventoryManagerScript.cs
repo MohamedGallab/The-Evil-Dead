@@ -5,7 +5,6 @@ using System.Xml.Linq;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine.UI;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class InventoryManagerScript : MonoBehaviour
 {
@@ -24,6 +23,10 @@ public class InventoryManagerScript : MonoBehaviour
 
     int EquippedGrenadeIndex = -1;
 
+    [SerializeField]
+    GameObject KnifeSlot;
+
+
     int FirstCombineItemIndex = -1;
 
     // To place the default items in the inventory at the beginning
@@ -38,14 +41,15 @@ public class InventoryManagerScript : MonoBehaviour
 
     //Player health display
     [SerializeField]
-    GameObject HealthSlot;
-
+    GameObject HealthFill;
+    Slider HealthBar;
+    [SerializeField]
+    GameObject HealthTextObj;
     Text HealthText;
 
     //Player gold coins display
     [SerializeField]
-    GameObject GoldSlot;
-
+    GameObject GoldTextObj;
     Text GoldText;
 
     //Results of crafting
@@ -63,26 +67,37 @@ public class InventoryManagerScript : MonoBehaviour
     [SerializeField]
     Ammo NormalHighGradeAmmo;
 
+    //Initialize gold
+    float Gold = 30;
+
     void Start()
     {
         PickUpItem(DefaultItem1);
         PickUpItem(DefaultItem2);
         PickUpItem(DefaultItem3);
 
-        //Fetch the text of the health points
-        GameObject healthStack = HealthSlot.transform.Find("Stack").gameObject;
-        HealthText = healthStack.GetComponent<Text>();
+        //Fetch the text and bar of the health points
+        HealthText = HealthTextObj.GetComponent<Text>();
+        HealthText.text = "8"; 
         HealthText.enabled = true;
 
+        HealthBar = HealthFill.GetComponent<Slider>();
+        HealthBar.maxValue = 8;
+        HealthBar.value = 8;
+
         //Fetch the text of the health points
-        GameObject goldStack = GoldSlot.transform.Find("Stack").gameObject;
-        GoldText = goldStack.GetComponent<Text>();
+        GoldText = GoldTextObj.GetComponent<Text>();
+        GoldText.text = Gold+"";
         GoldText.enabled = true;
     }
 
     void Update()
     {
-        //Fetch the player's health and gold to update them
+        //Update player's gold
+        GoldText.text = Gold + "";
+
+        //Fetch the player's health to update the health text and the health bar
+        
     }
 
     public void PickUpItem(Item newItem)
@@ -150,7 +165,7 @@ public class InventoryManagerScript : MonoBehaviour
         return -1;
     }
 
-    private Item CreateClone(Item item)
+    public Item CreateClone(Item item)
     {
         Item clone = Item.CreateInstance<Item>(); ;
         if(item is Ammo)
@@ -266,11 +281,13 @@ public class InventoryManagerScript : MonoBehaviour
         {
             //Replace this next line with updating the player's health in the player script
             HealthText.text = (int.Parse(HealthText.text) + (usedItem as Herb).HealthPoints) + "";
+            HealthBar.value = int.Parse(HealthText.text);
         }
         else if (usedItem is Mixture)
         {
             //Replace this next line with updating the player's health in the player script
             HealthText.text = (int.Parse(HealthText.text) + (usedItem as Mixture).HealthPoints) + "";
+            HealthBar.value = int.Parse(HealthText.text);
         }
 
         Items[slotIndex] = null;
@@ -285,9 +302,9 @@ public class InventoryManagerScript : MonoBehaviour
         FirstCombineItemIndex = slotIndex;
     }
 
-    public bool isCombining() //to know if the state of the game is between the 2 clicks of combining 2 items
+    public int isCombining() //to know if the state of the game is between the 2 clicks of combining 2 items
     {
-        return FirstCombineItemIndex != -1;
+        return FirstCombineItemIndex;
     }
 
     public Item GetFirstCombineItem()
@@ -403,6 +420,18 @@ public class InventoryManagerScript : MonoBehaviour
         {
             //play a sound -> there is no equipped grenade
         }
+    }
+
+    public void KnifeTakesHit(int amount)
+    {
+        InventoryKnifeSlot knifeScript = KnifeSlot.GetComponent<InventoryKnifeSlot>();
+        knifeScript.TakeHit(amount);
+    }
+
+    public void RepaireKnife()
+    {
+        InventoryKnifeSlot knifeScript = KnifeSlot.GetComponent<InventoryKnifeSlot>();
+        knifeScript.Repair();
     }
 
     //For the store

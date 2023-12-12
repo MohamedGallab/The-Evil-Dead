@@ -144,7 +144,8 @@ public class InventorySlot : MonoBehaviour
         {
             possibleActions.Add(new TMP_Dropdown.OptionData("Discard"));
         }
-        if (InventoryScript.isCombining())
+        int firstItemIndex = InventoryScript.isCombining();
+        if (firstItemIndex != -1 && firstItemIndex != IndexInInventory)
         {
             Item firstItem = InventoryScript.GetFirstCombineItem();
             if((firstItem is Herb && CurrentItem is Herb) || (firstItem is Gunpowder && CurrentItem is Gunpowder))
@@ -152,6 +153,7 @@ public class InventorySlot : MonoBehaviour
                 possibleActions.Add(new TMP_Dropdown.OptionData("Craft"));
             }
         }
+        possibleActions.Add(new TMP_Dropdown.OptionData(""));
         return possibleActions;
     }
 

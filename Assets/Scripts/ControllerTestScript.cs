@@ -6,13 +6,10 @@ using UnityEngine;
 public class ControllerTestScript : MonoBehaviour
 {
     [SerializeField]
-    GameObject EquippedWeapon;
-
-    [SerializeField]
-    GameObject KnifeSlot;
-
-    [SerializeField]
     GameObject InventoryManager;
+
+    [SerializeField]
+    Canvas InventoryCanvas;
 
     // Start is called before the first frame update
     void Start()
@@ -24,34 +21,53 @@ public class ControllerTestScript : MonoBehaviour
     void Update()
     {
         UnlockCursor();
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F)) //fire equipped weapon
         {
-            InventoryEquippedWeaponSlot equippedScript = EquippedWeapon.GetComponent<InventoryEquippedWeaponSlot>();
-            equippedScript.Fire();
+            InventoryManagerScript inventoryScript = InventoryManager.GetComponent<InventoryManagerScript>();
+            inventoryScript.FireWeapon();
         }
 
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.G)) //throw equipped grenade
         {
-            InventoryManagerScript equippedScript = InventoryManager.GetComponent<InventoryManagerScript>();
-            equippedScript.ThrowGrenade();
+            InventoryManagerScript inventoryScript = InventoryManager.GetComponent<InventoryManagerScript>();
+            inventoryScript.ThrowGrenade();
         }
-
+         //reload equipped weapon
         if (Input.GetKeyDown(KeyCode.R))
         {
-            InventoryManagerScript equippedScript = InventoryManager.GetComponent<InventoryManagerScript>();
-            equippedScript.ReloadEquippedWeapon();
+            InventoryManagerScript inventoryScript = InventoryManager.GetComponent<InventoryManagerScript>();
+            inventoryScript.ReloadEquippedWeapon();
         }
 
-        if (Input.GetKeyDown(KeyCode.H))
+        if (Input.GetKeyDown(KeyCode.H)) //knife takes a hit
         {
-            InventoryKnifeSlot equippedScript = KnifeSlot.GetComponent<InventoryKnifeSlot>();
-            equippedScript.TakeHit(11);
+            InventoryManagerScript inventoryScript = InventoryManager.GetComponent<InventoryManagerScript>();
+            inventoryScript.KnifeTakesHit(11);
         }
 
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K)) //repair knife
         {
-            InventoryKnifeSlot equippedScript = KnifeSlot.GetComponent<InventoryKnifeSlot>();
-            equippedScript.Repair();
+            InventoryManagerScript inventoryScript = InventoryManager.GetComponent<InventoryManagerScript>();
+            inventoryScript.RepaireKnife();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab)) //open/close inventory
+        {
+            CanvasGroup canvasGroup = InventoryCanvas.GetComponent<CanvasGroup>();
+            if(canvasGroup.interactable)
+            {
+                //Make canvas invisible
+                canvasGroup.alpha = 0f;
+                //Disable interactions
+                canvasGroup.interactable = false;
+            }
+            else
+            {
+                //Make canvas invisible
+                canvasGroup.alpha = 1f;
+                //Disable interactions
+                canvasGroup.interactable = true;
+            }
         }
     }
 
