@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
+using Unity.VisualScripting;
 
 public class InventoryKnifeSlot : MonoBehaviour
 {
     [SerializeField]
     Knife item;
+
+    Knife KnifeItem;
 
     Image SlotImage;
 
@@ -24,36 +27,42 @@ public class InventoryKnifeSlot : MonoBehaviour
         GameObject slotStack = transform.Find("Stack").gameObject;
         SlotText = slotStack.GetComponent<Text>();
 
+        //Ceate an instance of the scriptable object
+        GameObject InventoryManager = GameObject.Find("InventoryManager");
+        InventoryManagerScript InventoryScript = InventoryManager.GetComponent<InventoryManagerScript>();
+        KnifeItem = (Knife) InventoryScript.CreateClone(item);
+
         // Assign the Knife image to the slot image 
-        SlotImage.sprite = item.ItemImage;
+        SlotImage.sprite = KnifeItem.ItemImage;
         SlotImage.enabled = true;
 
         // Assign the Knife durability to the slot text 
-        SlotText.text = item.Durability + "";
+        SlotText.text = KnifeItem.Durability + "";
         SlotText.enabled = true;
+
     }
 
     // Update is called once per frame
     void Update()
     {
         // Update the Knife durability to the slot text 
-        SlotText.text = item.Durability+"";
+        SlotText.text = KnifeItem.Durability+"";
     }
 
     public void TakeHit(float amount) //amount is a positive number that represents the damage bec of a hit
     {
-        if(item.Durability - amount < 0)
+        if(KnifeItem.Durability - amount < 0)
         {
-            item.Durability = 0;
+            KnifeItem.Durability = 0;
         }
         else
         {
-            item.Durability = item.Durability - amount;
+            KnifeItem.Durability = KnifeItem.Durability - amount;
         }
     }
 
     public void Repair()
     {
-        item.Durability = 10;
+        KnifeItem.Durability = 10;
     }
 }

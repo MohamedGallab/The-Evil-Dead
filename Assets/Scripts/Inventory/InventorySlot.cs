@@ -48,7 +48,6 @@ public class InventorySlot : MonoBehaviour
         GameObject InventoryManager = GameObject.Find("InventoryManager");
         InventoryScript = InventoryManager.GetComponent<InventoryManagerScript>();
 
-
     }
 
     private void Update()
@@ -146,6 +145,16 @@ public class InventorySlot : MonoBehaviour
         {
             possibleActions.Add(new TMP_Dropdown.OptionData("Discard"));
         }
+        int firstItemIndex = InventoryScript.isCombining();
+        if (firstItemIndex != -1 && firstItemIndex != IndexInInventory)
+        {
+            Item firstItem = InventoryScript.GetFirstCombineItem();
+            if((firstItem is Herb && CurrentItem is Herb) || (firstItem is Gunpowder && CurrentItem is Gunpowder))
+            {
+                possibleActions.Add(new TMP_Dropdown.OptionData("Craft"));
+            }
+        }
+        possibleActions.Add(new TMP_Dropdown.OptionData(""));
         return possibleActions;
     }
 
@@ -156,19 +165,32 @@ public class InventorySlot : MonoBehaviour
 
         if (selectedOption.Equals("Equip"))
         {
+            //Reset the state of combining
+            InventoryScript.SetFirstCombineItem(-1);
+
             Equip();
         }
         else if (selectedOption.Equals("Use"))
         {
+            //Reset the state of combining
+            InventoryScript.SetFirstCombineItem(-1);
+
             Use();
         }
         else if (selectedOption.Equals("Combine"))
         {
-
+            Combine();
         }
         else if (selectedOption.Equals("Discard"))
         {
+            //Reset the state of combining
+            InventoryScript.SetFirstCombineItem(-1);
+
             DiscardItem();
+        }
+        else if(selectedOption.Equals("Craft"))
+        {
+            PerformCrafting();
         }
     }
 
@@ -198,13 +220,30 @@ public class InventorySlot : MonoBehaviour
 
     public void Combine()
     {
-
+        InventoryScript.SetFirstCombineItem(IndexInInventory);
     }
 
     public void Use()
     {
         //Notify inventory
         InventoryScript.ItemUsed(IndexInInventory);
+
+        //Handle the slot's appearance
+        CurrentItem = null;
+
+        SlotImage.sprite = null;
+        SlotImage.enabled = false;
+
+        SlotText.text = null;
+        SlotText.enabled = false;
+
+        StackCount = 0;
+    }
+
+    public void PerformCrafting()
+    {
+        //Notify Inventory
+        InventoryScript.PerformCrafting(IndexInInventory);
 
         //Handle the slot's appearance
         CurrentItem = null;
@@ -233,5 +272,4 @@ public class InventorySlot : MonoBehaviour
             return tmp;
         }
     }
-
 }
