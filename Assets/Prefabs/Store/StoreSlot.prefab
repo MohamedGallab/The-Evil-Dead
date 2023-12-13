@@ -416,6 +416,7 @@ MonoBehaviour:
   ItemImageDisplay: {fileID: 5655939086406969119}
   ItemPriceText: {fileID: 914694327635503649}
   ItemDescriptionText: {fileID: 6829192464212732681}
+  AmmoGroup: {fileID: 4576577778105792342}
   AmmoCountText: {fileID: 4620577287560574612}
 --- !u!114 &8274905538101057685
 MonoBehaviour:

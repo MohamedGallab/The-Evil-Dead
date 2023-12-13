@@ -16,48 +16,11 @@ public class StoreSlot : MonoBehaviour
     [SerializeField] TextMeshProUGUI AmmoCountText;
 
     IStoreSlotHandler slotHandler;
-    Item CurrentItem;
+    public Item CurrentItem { get; private set; }
     string actionType;
+    public int ammoStackCount { get;  set; }
 
-    public void InitializeItem(InventorySlot newSlot, string type, IStoreSlotHandler handle)
-    {
-        CurrentItem = newSlot.CurrentItem;
-        actionType = type;
-        slotHandler = handle;
-        ItemNameDisplay.SetText(CurrentItem.ItemName);
-        ItemDescriptionText.SetText(CurrentItem.ItemDescription);
-
-        if (CurrentItem.ItemImage != null)
-        {
-            ItemImageDisplay.sprite = CurrentItem.ItemImage;
-            ItemImageDisplay.enabled = true;
-        }
-
-        Button button = GetComponent<Button>();
-        button.onClick.AddListener(HandleButtonClick);
-        if (actionType == "Purchase")
-        {
-            ItemPriceText.SetText(CurrentItem.BuyPrice.ToString());
-        }
-        else if (actionType == "Sell")
-        {
-            ItemPriceText.SetText(CurrentItem.SellPrice.ToString());
-            if (!CurrentItem.IsSellable)
-            {
-                button.interactable = false;
-            }
-            if (CurrentItem is Ammo)
-            {
-                AmmoCountText.SetText(newSlot.StackCount.ToString());
-            }
-            else
-            {
-                AmmoCountText.enabled = false;
-            }
-        }
-    }
-
-    public void InitializeItem(Item newItem, string type, IStoreSlotHandler handle)
+    public void InitializeItem(Item newItem, string type, IStoreSlotHandler handle, int stackCount)
     {
         CurrentItem = newItem;
         actionType = type;
@@ -84,9 +47,12 @@ public class StoreSlot : MonoBehaviour
             {
                 button.interactable = false;
             }
-            if (CurrentItem is Ammo)
+            if (newItem is Ammo)
             {
-                AmmoCountText.SetText((CurrentItem as Ammo).stal.ToString());
+                ammoStackCount = stackCount;
+                AmmoCountText.SetText(stackCount.ToString());
+                AmmoCountText.enabled = true;
+                AmmoGroup.SetActive(true);
             }
             else
             {
@@ -103,9 +69,12 @@ public class StoreSlot : MonoBehaviour
         }
     }
 
+    public void UpdateAmmoStackCount(int newStackCount)
+    {
+        ammoStackCount += newStackCount;
+        AmmoCountText.SetText(ammoStackCount.ToString());
+    }
     public GameObject GetSlotInstance() { return gameObject; }
-
-    public Item GetItem() { return CurrentItem; }
 
     public void OnRectTransformRemoved() { Destroy(gameObject); }
 }

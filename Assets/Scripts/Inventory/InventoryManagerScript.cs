@@ -16,7 +16,7 @@ public class InventoryManagerScript : MonoBehaviour
 
     }
     [SerializeField]
-    public GameObject[]  Slots { get; private set; }
+    public GameObject[] Slots;
 
     int CurrentSlotIndex = 0;
 

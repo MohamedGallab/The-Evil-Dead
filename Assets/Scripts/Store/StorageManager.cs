@@ -65,7 +65,7 @@ public class StorageManager : MonoBehaviour
 
     void RemoveItem(Item ItemToRemove)
     {
-        StoreSlot slotToRemove = StorageSlots.Where(slot => slot.GetItem() == ItemToRemove).FirstOrDefault();
+        StoreSlot slotToRemove = StorageSlots.Where(slot => slot.CurrentItem == ItemToRemove).FirstOrDefault();
         StorageSlots.Remove(slotToRemove);
         Destroy(slotToRemove.GetSlotInstance());
     }

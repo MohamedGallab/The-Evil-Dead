@@ -35,11 +35,12 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
             }
         }
 
-        foreach (Item loadedobject in InventoryManagerScript.Items)
+        foreach (GameObject loadedobject in InventoryManagerScript.Slots)
         {
-            if (loadedobject != null && loadedobject.IsSellable)
+            InventorySlot inventorySlot = loadedobject.GetComponent<InventorySlot>();
+            if (inventorySlot.CurrentItem != null && inventorySlot.CurrentItem.IsSellable)
             {
-                AddInventorySlot(loadedobject as Item);
+                AddInventorySlot(inventorySlot.CurrentItem, inventorySlot.StackCount);
             }
         }
     }
@@ -49,16 +50,16 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         GameObject NewSlot;
         NewSlot = Instantiate(StoreSlotPrefab, StoreListContent.transform);
         StoreSlot SlotInstance = NewSlot.GetComponent<StoreSlot>();
-        SlotInstance.InitializeItem(itemToAdd, "Purchase", this);
+        SlotInstance.InitializeItem(itemToAdd, "Purchase", this, 0);
         StoreSlots.Add(SlotInstance);
     }
 
-    public void AddInventorySlot(Item itemToAdd)
+    public void AddInventorySlot(Item itemToAdd, int stackCount)
     {
         GameObject NewSlot;
         NewSlot = Instantiate(StoreSlotPrefab, InventoryListContent.transform);
         StoreSlot SlotInstance = NewSlot.GetComponent<StoreSlot>();
-        SlotInstance.InitializeItem(itemToAdd, "Sell", this);
+        SlotInstance.InitializeItem(itemToAdd, "Sell", this, stackCount);
         InventorySlots.Add(SlotInstance);
     }
 
@@ -82,11 +83,16 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
             InventoryManagerScript.PickUpItem(itemToPurchase);
             if (itemToPurchase is Ammo && SameAmmoSlot(itemToPurchase as Ammo) == -1)
             {
-                AddInventorySlot(itemToPurchase);
+                AddInventorySlot(itemToPurchase, (itemToPurchase as Ammo).AmountPerPack);
+
+            } else if  (itemToPurchase is Ammo && SameAmmoSlot(itemToPurchase as Ammo) != -1)
+                {
+                int stackCountIndex = SameAmmoSlot(itemToPurchase as Ammo);
+                InventorySlots[stackCountIndex].UpdateAmmoStackCount((itemToPurchase as Ammo).AmountPerPack);
             }
             else if (itemToPurchase is not Ammo)
             {
-                AddInventorySlot(itemToPurchase);
+                AddInventorySlot(itemToPurchase, 0);
 
             }
             if (itemToPurchase is Weapon)
@@ -110,7 +116,7 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         //Check if the same ammo type already exists in the inventory
         for (int i = 0; i < InventorySlots.Count; i++)
         {
-            if (InventorySlots[i] != null && InventorySlots[i].GetItem() is Ammo && (InventorySlots[i].GetItem() as Ammo).Weapon.Equals(ammoItem.Weapon))
+            if (InventorySlots[i] != null && InventorySlots[i].CurrentItem is Ammo && (InventorySlots[i].CurrentItem as Ammo).Weapon.Equals(ammoItem.Weapon))
             {
                 return i;
             }
@@ -120,14 +126,14 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
 
     public void RemoveStoreItem(Item ItemToRemove)
     {
-        StoreSlot slotToRemove = StoreSlots.Where(slot => slot.GetItem() == ItemToRemove).FirstOrDefault();
+        StoreSlot slotToRemove = StoreSlots.Where(slot => slot.CurrentItem == ItemToRemove).FirstOrDefault();
         StoreSlots.Remove(slotToRemove);
         Destroy(slotToRemove.GetSlotInstance());
     }
 
     public void RemoveInventoryItem(Item ItemToRemove)
     {
-        StoreSlot slotToRemove = InventorySlots.Where(slot => slot.GetItem() == ItemToRemove).FirstOrDefault();
+        StoreSlot slotToRemove = InventorySlots.Where(slot => slot.CurrentItem == ItemToRemove).FirstOrDefault();
         InventorySlots.Remove(slotToRemove);
         Destroy(slotToRemove.GetSlotInstance());
     }
