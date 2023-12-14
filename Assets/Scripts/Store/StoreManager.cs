@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class StoreManager : MonoBehaviour, IStoreSlotHandler
@@ -30,6 +31,17 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
                 }
             }
         }
+    }
+
+    public void UpdateInventorySlots()
+    {
+        //Iterate over the original list to destroy associated items
+        foreach (StoreSlot loadedobject in InventorySlots)
+        {
+            Destroy(loadedobject.GetSlotInstance());
+        }
+
+        InventorySlots.Clear();
 
         foreach (GameObject loadedobject in InventoryManagerScript.Slots)
         {
@@ -87,24 +99,24 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         }
 
         // Check if there is enough space in the inventory
-        if (!InventoryManagerScript.CanPickupItem())
-        {
-            // If the item is not ammo, then there is no space
-            if (itemToPurchase is not Ammo)
-            {
-                Debug.Log("Not enough space");
-                return;
-            }
+        //if (!InventoryManagerScript.CanPickupItem())
+        //{
+        //    // If the item is not ammo, then there is no space
+        //    if (itemToPurchase is not Ammo)
+        //    {
+        //        Debug.Log("Not enough space");
+        //        return;
+        //    }
 
-            // If the item is ammo, it is possible that there is ammo of the same type in the inventory
-            int slotIndex = SameAmmoSlot(itemToPurchase as Ammo);
-            if (slotIndex != -1)
-            {
-                InventorySlots[slotIndex].UpdateAmmoStackCount((itemToPurchase as Ammo).AmountPerPack);
-                InventoryManagerScript.PickUpItem(itemToPurchase);
-            }
-            return;
-        }
+        //    // If the item is ammo, it is possible that there is ammo of the same type in the inventory
+        //    int slotIndex = SameAmmoSlot(itemToPurchase as Ammo);
+        //    if (slotIndex != -1)
+        //    {
+        //        InventorySlots[slotIndex].UpdateAmmoStackCount((itemToPurchase as Ammo).AmountPerPack);
+        //        InventoryManagerScript.PickUpItem(itemToPurchase);
+        //    }
+        //    return;
+        //}
 
         // There is enough space in the inventory for either ammo or non-ammo items
         InventoryManagerScript.PickUpItem(itemToPurchase);

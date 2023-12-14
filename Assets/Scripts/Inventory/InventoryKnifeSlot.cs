@@ -10,7 +10,7 @@ public class InventoryKnifeSlot : MonoBehaviour
     [SerializeField]
     Knife item;
 
-    Knife KnifeItem;
+    public Knife KnifeItem { get; private set; }
 
     Image SlotImage;
 

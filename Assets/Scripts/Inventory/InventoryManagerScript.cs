@@ -72,7 +72,17 @@ public class InventoryManagerScript : MonoBehaviour
     Ammo NormalHighGradeAmmo;
 
     //Initialize gold
-    float Gold = 30;
+    public float Gold { get; private set; } = 230;
+
+    public bool IsEnoughGold(float price)
+    {
+        return Gold >= price;
+    }
+
+    public void UpdateGold(float price)
+    {
+        Gold += price;
+    }
 
     void Start()
     {

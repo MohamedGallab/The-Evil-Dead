@@ -9,8 +9,18 @@ public class PistolTest : MonoBehaviour, IInteractable
     [SerializeField]
     Item Item;
 
+    [SerializeField]
+    GameObject StoreCanvas;
     InventoryManagerScript InventoryScript;
 
+    [SerializeField]
+    StoreManager storeManager;
+
+    [SerializeField]
+    KnifeMenuManager knifeMenuManager;
+
+    [SerializeField]
+    GameObject KnifeMenuCanvas;
     void Start()
     {
         GameObject InventoryManager = GameObject.Find("InventoryManager");
@@ -18,16 +28,19 @@ public class PistolTest : MonoBehaviour, IInteractable
     }
     public void OnInteract()
     {
-        if(InventoryScript.CanPickupItem(Item))
-        {
-            InventoryScript.PickUpItem(Item);
-            gameObject.SetActive(false);
-            //play some sound for pickup
-        }
-        else
-        {
-            //play some sound that you cannot pick up the item
-        }
+        knifeMenuManager.UpdateKnife();
+        KnifeMenuCanvas.SetActive(true);
+        //if(InventoryScript.CanPickupItem(Item))
+        //{
+        //    InventoryScript.PickUpItem(Item);
+        //    gameObject.SetActive(false);
+        //    //play some sound for pickup
+        //}
+        //else
+        //{
+        //    //play some sound that you cannot pick up the item
+        //}
+
     }
 }
 
