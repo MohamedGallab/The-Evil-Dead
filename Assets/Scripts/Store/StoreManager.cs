@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,11 +10,26 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
     [SerializeField] GameObject StoreSlotPrefab;
     [SerializeField] GameObject StoreListContent;
     [SerializeField] GameObject InventoryListContent;
-
+    [SerializeField] TextMeshProUGUI GoldText;
+    [SerializeField] bool IsShowMenu = false;
+    [SerializeField] GameObject _storeCanvas;
     List<StoreSlot> InventorySlots;
     List<StoreSlot> StoreSlots;
 
-    // Handles the initialization of the store and inventory lists
+    public void ShowMenu()
+    {
+        if (IsShowMenu)
+        {
+            UpdateInventorySlots();
+            _storeCanvas.SetActive(true);
+        }
+        else
+        {
+            _storeCanvas.SetActive(false);
+        }
+    }
+
+    // Handles the initialization of the store list
     void Awake()
     {
         StoreSlots = new List<StoreSlot>();
@@ -33,9 +49,9 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         }
     }
 
+    // Updates the inventory list
     public void UpdateInventorySlots()
     {
-        //Iterate over the original list to destroy associated items
         foreach (StoreSlot loadedobject in InventorySlots)
         {
             Destroy(loadedobject.GetSlotInstance());
@@ -46,11 +62,12 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         foreach (GameObject loadedobject in InventoryManagerScript.Slots)
         {
             InventorySlot inventorySlot = loadedobject.GetComponent<InventorySlot>();
-            if (inventorySlot.CurrentItem != null && inventorySlot.CurrentItem.IsSellable)
+            if (inventorySlot.CurrentItem != null)
             {
-                AddInventorySlot(inventorySlot.CurrentItem, inventorySlot.StackCount);
+                AddInventorySlot(inventorySlot, inventorySlot.IndexInInventory);
             }
         }
+        GoldText.SetText(InventoryManagerScript.Gold.ToString());
     }
 
     // Adds a new Store Slot to the Store List
@@ -59,31 +76,22 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         GameObject NewSlot = Instantiate(StoreSlotPrefab, StoreListContent.transform);
         StoreSlot SlotInstance = NewSlot.GetComponent<StoreSlot>();
         // 
-        SlotInstance.InitializeItem(itemToAdd, "Purchase", this, 0);
+        SlotInstance.InitializeItem(itemToAdd, "Purchase", this, 0, -1);
         StoreSlots.Add(SlotInstance);
     }
 
     // Adds a new Inventory Slot to the Inventory List
-    void AddInventorySlot(Item itemToAdd, int stackCount)
+    void AddInventorySlot(InventorySlot newInventorySlot, int indexInInventory)
     {
         GameObject NewSlot = Instantiate(StoreSlotPrefab, InventoryListContent.transform);
         StoreSlot SlotInstance = NewSlot.GetComponent<StoreSlot>();
-        SlotInstance.InitializeItem(itemToAdd, "Sell", this, stackCount);
+        SlotInstance.InitializeItem(newInventorySlot.CurrentItem, "Sell", this, newInventorySlot.StackCount, indexInInventory);
         InventorySlots.Add(SlotInstance);
     }
 
-    // TO BE IMPLMENTED TO ADD ITEM TO INVENTORY AND DEDUCT MONEY FROM PLAYER
-    void PerformPurchaseTransaction()
-    {
-
-    }
-
     // Performs the purchase of an item
-    void PurchaseItem(Item itemToPurchase)
+    public void AddToInventory(Item itemToPurchase, int stackCount)
     {
-        // TO BE REPLED WITH ACTUAL PLAYER MONEY
-        int PlayerMoney = 1000;
-
         // Checks if the item is buyable
         if (!itemToPurchase.IsBuyable)
         {
@@ -92,13 +100,28 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         }
 
         // Check if player has enough money
-        if (itemToPurchase.BuyPrice > PlayerMoney)
+        if (itemToPurchase.BuyPrice > InventoryManagerScript.Gold)
         {
             Debug.Log("Not enough money");
             return;
         }
 
-        // Check if there is enough space in the inventory
+        if (!InventoryManagerScript.CanPickupItem(itemToPurchase))
+        {
+            Debug.Log("Not enough space");
+        }
+        else
+        {
+            InventoryManagerScript.PickUpItem(itemToPurchase);
+            InventoryManagerScript.UpdateGold(-itemToPurchase.BuyPrice);
+            UpdateInventorySlots();
+            if (itemToPurchase is Weapon)
+            {
+                RemoveStoreItem(itemToPurchase);
+            }
+        }
+
+        //// Check if there is enough space in the inventory
         //if (!InventoryManagerScript.CanPickupItem())
         //{
         //    // If the item is not ammo, then there is no space
@@ -118,58 +141,45 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         //    return;
         //}
 
-        // There is enough space in the inventory for either ammo or non-ammo items
-        InventoryManagerScript.PickUpItem(itemToPurchase);
+        //// There is enough space in the inventory for either ammo or non-ammo items
+        //InventoryManagerScript.PickUpItem(itemToPurchase);
 
-        // Add the item to the inventory list if it is not ammo
-        if (itemToPurchase is not Ammo)
-        {
-            AddInventorySlot(itemToPurchase, 0);
+        //// Add the item to the inventory list if it is not ammo
+        //if (itemToPurchase is not Ammo)
+        //{
+        //    AddInventorySlot(itemToPurchase, 0);
 
-            // Weapon can only be bought once
+        //    // Weapon can only be bought once
 
-            if (itemToPurchase is Weapon)
-            {
-                RemoveStoreItem(itemToPurchase);
-            }
-        }
-        else if (itemToPurchase is Ammo)
-        {
-            // Check if there is already ammo of the same type in the inventory
-            int slotIndex = SameAmmoSlot(itemToPurchase as Ammo);
-            if (slotIndex == -1)
-            {
-                // If there is no ammo of the same type, add a new slot
-                AddInventorySlot(itemToPurchase, (itemToPurchase as Ammo).AmountPerPack);
-            }
-            else
-            {
-                // If there is ammo of the same type, update the stack count
-                InventorySlots[slotIndex].UpdateAmmoStackCount((itemToPurchase as Ammo).AmountPerPack);
-            }
-        }
+        //    if (itemToPurchase is Weapon)
+        //    {
+        //        RemoveStoreItem(itemToPurchase);
+        //    }
+        //}
+        //else if (itemToPurchase is Ammo)
+        //{
+        //    // Check if there is already ammo of the same type in the inventory
+        //    int slotIndex = SameAmmoSlot(itemToPurchase as Ammo);
+        //    if (slotIndex == -1)
+        //    {
+        //        // If there is no ammo of the same type, add a new slot
+        //        AddInventorySlot(itemToPurchase, (itemToPurchase as Ammo).AmountPerPack);
+        //    }
+        //    else
+        //    {
+        //        // If there is ammo of the same type, update the stack count
+        //        InventorySlots[slotIndex].UpdateAmmoStackCount((itemToPurchase as Ammo).AmountPerPack);
+        //    }
+        //}
 
     }
 
-    // Performs the sale of an item
-    void SellItem(Item itemToSell)
+    // Performs the selling of an item
+    public void RemoveFromInventory(Item itemToSell, int indexInInventory)
     {
-        RemoveInventoryItem(itemToSell);
-        // Deduct money from player
-    }
-
-    // Checks if there is already ammo of the same type in the inventory slots
-    int SameAmmoSlot(Ammo ammoItem)
-    {
-        //Check if the same ammo type already exists in the inventory
-        for (int i = 0; i < InventorySlots.Count; i++)
-        {
-            if (InventorySlots[i] != null && InventorySlots[i].CurrentItem is Ammo && (InventorySlots[i].CurrentItem as Ammo).Weapon.Equals(ammoItem.Weapon))
-            {
-                return i;
-            }
-        }
-        return -1;
+        InventoryManagerScript.Slots[indexInInventory].GetComponent<InventorySlot>().DiscardItem();
+        InventoryManagerScript.UpdateGold(itemToSell.SellPrice);
+        UpdateInventorySlots();
     }
 
     // Removes a store slot from the store list
@@ -180,24 +190,4 @@ public class StoreManager : MonoBehaviour, IStoreSlotHandler
         Destroy(slotToRemove.GetSlotInstance());
     }
 
-    // Removes a store slot from the inventory list
-    void RemoveInventoryItem(Item ItemToRemove)
-    {
-        StoreSlot slotToRemove = InventorySlots.Where(slot => slot.CurrentItem == ItemToRemove).FirstOrDefault();
-        InventorySlots.Remove(slotToRemove);
-        Destroy(slotToRemove.GetSlotInstance());
-    }
-
-    // Handles the click of a store slot using the IStoreSlotHandler interface
-    public void OnClick(Item item, string actionType)
-    {
-        if (actionType == "Purchase")
-        {
-            PurchaseItem(item);
-        }
-        else if (actionType == "Sell")
-        {
-            SellItem(item);
-        }
-    }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AssaultRifle
   m_EditorClassIdentifier: 
   _itemImage: {fileID: 21300000, guid: e4fa8ad331a4aae4f9917f73521d0add, type: 3}
-  _itemName: Assault Riff;e
+  _itemName: Assault Riffle
   _itemDescription: pew pew assault riffle
   _isSellable: 0
   _isBuyable: 1

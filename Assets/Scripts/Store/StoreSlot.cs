@@ -12,17 +12,19 @@ public class StoreSlot : MonoBehaviour
     [SerializeField] GameObject AmmoGroup;
     [SerializeField] TextMeshProUGUI AmmoCountText;
 
-    IStoreSlotHandler slotHandler;
+    IStoreSlotHandler _slotHandler;
     public Item CurrentItem { get; private set; }
-    string actionType;
-    int ammoStackCount;
+    string _actionType;
+    public int _ammoStackCount;
+    int _inventorySlotIndex;
 
     // Initializes the slot with the given item and type
-    public void InitializeItem(Item newItem, string type, IStoreSlotHandler handle, int stackCount)
+    public void InitializeItem(Item newItem, string type, IStoreSlotHandler handle, int stackCount, int inventorySlotIndex)
     {
         CurrentItem = newItem;
-        actionType = type;
-        slotHandler = handle;
+        _actionType = type;
+        _slotHandler = handle;
+        _inventorySlotIndex = inventorySlotIndex;
 
         // Initialize the item's name, description and image
         ItemNameDisplay.SetText(CurrentItem.ItemName);
@@ -38,19 +40,19 @@ public class StoreSlot : MonoBehaviour
         button.onClick.AddListener(HandleButtonClick);
 
         // Initialize the item's price
-        if (actionType == "Purchase")
+        if (_actionType == "Purchase")
         {
             ItemPriceText.SetText(CurrentItem.BuyPrice.ToString());
 
             // Show the ammo count if the item is ammo
             if (CurrentItem is Ammo)
             {
-                ammoStackCount = stackCount;
+                _ammoStackCount = stackCount;
                 AmmoCountText.SetText((CurrentItem as Ammo).AmountPerPack.ToString());
                 AmmoGroup.SetActive(true);
             }
         }
-        else if (actionType == "Sell")
+        else if (_actionType == "Sell")
         {
             ItemPriceText.SetText(CurrentItem.SellPrice.ToString());
             // If the item is not sellable, disable the button
@@ -62,8 +64,19 @@ public class StoreSlot : MonoBehaviour
             // If the item is ammo, display the ammo count
             if (CurrentItem is Ammo)
             {
-                ammoStackCount = stackCount;
-                AmmoCountText.SetText(stackCount.ToString());
+                _ammoStackCount = stackCount;
+                AmmoCountText.SetText(_ammoStackCount.ToString());
+                AmmoGroup.SetActive(true);
+            }
+        } else if (_actionType == "Store" || _actionType == "Unstore")
+        {
+            ItemPriceText.SetText(CurrentItem.SellPrice.ToString());
+
+            // If the item is ammo, display the ammo count
+            if (CurrentItem is Ammo)
+            {
+                _ammoStackCount = stackCount;
+                AmmoCountText.SetText(_ammoStackCount.ToString());
                 AmmoGroup.SetActive(true);
             }
         }
@@ -72,17 +85,23 @@ public class StoreSlot : MonoBehaviour
     // Handles the button click event by invoking the 'OnClick' method of the assigned slot handler,
     void HandleButtonClick()
     {
-        if (slotHandler != null)
+        if (_slotHandler != null)
         {
-            slotHandler.OnClick(CurrentItem, actionType);
+            if (_actionType == "Purchase" || _actionType == "Unstore")
+            {
+                _slotHandler.AddToInventory(CurrentItem, _ammoStackCount);
+            }
+            else if (_actionType == "Sell" || _actionType == "Store")
+            {
+                _slotHandler.RemoveFromInventory(CurrentItem, _inventorySlotIndex);
+            }
         }
     }
 
-    // Updates the ammo stack count
-    public void UpdateAmmoStackCount(int newStackCount)
+    public void StackAmmo(Ammo ammoItem)
     {
-        ammoStackCount += newStackCount;
-        AmmoCountText.SetText(ammoStackCount.ToString());
+        _ammoStackCount += ammoItem.AmountPerPack;
+        AmmoCountText.SetText(_ammoStackCount.ToString());
     }
 
     public GameObject GetSlotInstance() { return gameObject; }

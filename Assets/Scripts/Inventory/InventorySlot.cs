@@ -8,9 +8,8 @@ using TMPro;
 
 public class InventorySlot : MonoBehaviour
 {
-    public Item CurrentItem;
-
-    int IndexInInventory;
+    public Item CurrentItem { get; private set; }
+    public int IndexInInventory { get; private set; }
 
     Image SlotImage;
 

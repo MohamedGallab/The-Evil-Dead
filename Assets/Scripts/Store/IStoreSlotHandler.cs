@@ -1,5 +1,7 @@
 
 public interface IStoreSlotHandler
 {
-    void OnClick(Item item, string actionType);
+    void AddToInventory(Item item, int stackCount);
+    void RemoveFromInventory(Item item, int indexInInventory);
+
 }
