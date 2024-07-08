@@ -8,6 +8,10 @@ Resident Evil X Dead Space is a third-person survival horror game developed usin
 
 You play as Leon, the protagonist, navigating through a series of rooms filled with enemies and limited resources. Your objective is to survive by utilizing various weapons, grenades, and items while managing your health and inventory. The entire gameplay lasts between 10 to 15 minutes.
 
+## Installation
+
+1. download it from [here](https://drive.google.com/file/d/1yKN9qM-T5HLneDZnSAgSt2Smglwi9NrF/view?usp=drive_link)
+
 ## Features
 
 ### Player Mechanics
@@ -31,6 +35,3 @@ You play as Leon, the protagonist, navigating through a series of rooms filled w
 - **Enemies**: Encounter various enemies with different attack patterns and health points.
 - **Key Items**: Find key items to unlock new areas and progress through the level.
 
-## Installation
-
-1. download it from [here](https://drive.google.com/file/d/1yKN9qM-T5HLneDZnSAgSt2Smglwi9NrF/view?usp=drive_link)
